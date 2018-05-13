@@ -2,16 +2,16 @@
 const {MongoClient,ObjectID}  = require ('mongodb'); // vybereme pouze mongo client, to same co nahore plus dalsi
 
 
-MongoClient.connect('mongodb://localhost:27017/Users',(err,client)=>{
+MongoClient.connect('mongodb://localhost:27017/todos',(err,client)=>{
     if (err){
         console.log('Nelze se dostat na mongo server',err);
     }
     console.log('Jsem v mongu');
-    const db = client.db('TodoApp');
+    const db = client.db('todos');
 
 //-- find {hotovo:true}
 // db.collection('Todos').find({_id: new ObjectID('5af6efcc9f2c491090a86653')}).toArray((err,results)=>{
- db.collection('Todos').find({hotovo:false}).toArray((err,results)=>{
+ db.collection('todos').find({hotovo:false}).toArray((err,results)=>{
   
            console.log('Todos');
 

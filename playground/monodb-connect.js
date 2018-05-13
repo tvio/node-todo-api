@@ -2,17 +2,17 @@
 const {MongoClient,ObjectID}  = require ('mongodb'); // vybereme pouze mongo client, to same co nahore plus dalsi
 
 
-MongoClient.connect('mongodb://localhost:27017/Users',(err,client)=>{
+MongoClient.connect('mongodb://localhost:27017/todos',(err,client)=>{
     if (err){
         console.log('Nelze se dostat na mongo server',err);
     }
     console.log('Jsem v mongu');
     
-    const db = client.db('TodoApp');
+    const db = client.db('todos');
     
-    db.collection('Todos').insertOne({
-    text: 'Neco musim udelat',
-    comspleted: false
+    db.collection('todos').insertOne({
+    text: 'Neco musim udelat5',
+    hotovo: true
     },(err,result)=>{
         if (err){
             return console.log('Nelze vlozit zaznam',err);
