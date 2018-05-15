@@ -26,7 +26,7 @@ app.listen(3000,()=>{
     console.log('Aplikace bezi na portu 3000');
 });
 
-
+module.exports = {app};
 
 // //jak je to s ukoncenim spojeni?;
 // newTodo.save().then((doc)=>{
