@@ -22,6 +22,18 @@ app.post('/todo',(req,res)=>{
 
 });
 
+app.get('/todos',(req,res)=>{
+    Todo.find().then((todos)=>{
+        res.send({todos,
+        code: 'OK',
+        datum: new Date
+        });
+    },(e) => {
+        res.status(400).send(e);
+    
+    });
+});
+
 app.listen(3000,()=>{
     console.log('Aplikace bezi na portu 3000');
 });
