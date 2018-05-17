@@ -1,6 +1,6 @@
 var express = require ('express');
 var bodyParser = require('body-parser');
-
+var {ObjectID} = require('mongodb');
 var {mongoose} = require ('./db/mongoose');
 var {Todo} = require ('./models/todo');
 var {Yser} = require ('./models/user');
@@ -27,10 +27,14 @@ app.get('/todos',(req,res)=>{
 
     
     Todo.find().then((todos)=>{
+       if (!todos){
+           res.status(404).send({info:'nenalezeno',code: 'OK',datum: new Date})
+       } else {
         res.send({todos,
         code: 'OK',
         datum: new Date
-        });
+        
+        })};
     },(e) => {
         res.status(400).send(e);
     
@@ -48,15 +52,23 @@ app.listen(3000,()=>{
 app.get('/todos/:id',(req,res)=>{
    var id  = req.params.id;
 
-    // podle me neni potreba vraci callback s errorem
-//  if (!ObjectID.isValid)){
-//      return res.status(404).send();
-//  }
 
-   Todo.findById(id).then((todo)=>{
-       res.send({todo,
+if (!ObjectID.isValid(id)){
+      return res.status(404).send({info:'neni validni id',
         code: 'OK',
         datum: new Date});
+ }
+
+   Todo.findById(id).then((todo)=>{
+    if (!todo){
+        res.status(404).send({info:'nenalezeno',code: 'OK',datum: new Date})
+    } else {
+     res.send({todo,
+     code: 'OK',
+     datum: new Date
+     
+     })};
+      
        },(e) =>{
            res.status(400).send(e);
    });
