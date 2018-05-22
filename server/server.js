@@ -69,13 +69,32 @@ app.get('/todos/:id',(req,res)=>{
  });
  
 
-app.listen(port,()=>{
-    console.log('Aplikace bezi na portu 3000');
-});
+ app.delete('/todos/:id',(req,res)=>{
+    var id  = req.params.id;
+ 
+ 
+ if (!ObjectID.isValid(id)){
+       return res.status(404).send({info:'neni validni id',
+         code: 'OK',
+         datum: new Date});
+  }
+    Todo.findByIdAndRemove(id).then((todo)=>{
+        if (!todo){
+            res.status(404).send({info:'nenalezeno',code: 'OK',datum: new Date})
+        } else {
+         res.send({todo,
+         code: 'SMAZANO',
+         datum: new Date
+         
+         })};
+          
+           },(e) =>{
+               res.status(400).send(e);
+       });
+    });
 
-// get jedno tudu
 
-
+app.listen(port,()=> console.log('ToDo appka bezi na portu 3000'));
 
 
 
