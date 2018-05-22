@@ -6,6 +6,8 @@ var {Todo} = require ('./models/todo');
 var {Yser} = require ('./models/user');
 
 var app = express();
+var port = process.env.PORT || 3000;
+
 app.use(bodyParser.json());
 
 app.post('/todo',(req,res)=>{
@@ -41,7 +43,33 @@ app.get('/todos',(req,res)=>{
     });
 });
 
-app.listen(3000,()=>{
+pp.get('/todos/:id',(req,res)=>{
+    var id  = req.params.id;
+ 
+ 
+ if (!ObjectID.isValid(id)){
+       return res.status(404).send({info:'neni validni id',
+         code: 'OK',
+         datum: new Date});
+  }
+ 
+    Todo.findById(id).then((todo)=>{
+     if (!todo){
+         res.status(404).send({info:'nenalezeno',code: 'OK',datum: new Date})
+     } else {
+      res.send({todo,
+      code: 'OK',
+      datum: new Date
+      
+      })};
+       
+        },(e) =>{
+            res.status(400).send(e);
+    });
+ });
+ 
+
+app.listen(port,()=>{
     console.log('Aplikace bezi na portu 3000');
 });
 
@@ -49,31 +77,7 @@ app.listen(3000,()=>{
 
 
 
-app.get('/todos/:id',(req,res)=>{
-   var id  = req.params.id;
-
-
-if (!ObjectID.isValid(id)){
-      return res.status(404).send({info:'neni validni id',
-        code: 'OK',
-        datum: new Date});
- }
-
-   Todo.findById(id).then((todo)=>{
-    if (!todo){
-        res.status(404).send({info:'nenalezeno',code: 'OK',datum: new Date})
-    } else {
-     res.send({todo,
-     code: 'OK',
-     datum: new Date
-     
-     })};
-      
-       },(e) =>{
-           res.status(400).send(e);
-   });
-});
-
+a
 
 
 module.exports = {app};
