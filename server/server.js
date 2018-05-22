@@ -43,7 +43,7 @@ app.get('/todos',(req,res)=>{
     });
 });
 
-pp.get('/todos/:id',(req,res)=>{
+app.get('/todos/:id',(req,res)=>{
     var id  = req.params.id;
  
  
