@@ -9,6 +9,7 @@ const todos = [{
     _id: new ObjectID(),
     text: 'First test todo'
 },{
+    _id: new ObjectID(),
     text: 'Second test todo'
 }];
 
@@ -95,7 +96,7 @@ describe('GET /todos/id',() =>{
         .end(done);
     });
 
-    it('should return 400 if not valid',(done)=>{
+    it('should return 404 if not valid',(done)=>{
         request(app)
         .get('/todos/213')
         .expect(404)
@@ -106,7 +107,7 @@ describe('GET /todos/id',() =>{
 
 describe('DELETE /todos/:id', ()=>{
     it('should remove a todo', (done)=>{
-        var hexId = todos[0]._id.toHexString();
+        var hexId = todos[1]._id.toHexString();
 
         request(app)
           .delete(`/todos/${hexId}`)
@@ -131,11 +132,21 @@ describe('DELETE /todos/:id', ()=>{
 
     });
     it('should return 404 if todo not found',(done)=>{
+        var hexId = new ObjectID().toHexString();
+
+        request(app)
+        .delete(`/todos/${hexId}`)
+        .expect(404)
+        .end(done);
+    
 
     });
 
     it('should return 404 if obejct is not valid',(done)=>{
-
+        request(app)
+        .get('/todos/213')
+        .expect(404)
+        .end(done); 
     });
 });
 
