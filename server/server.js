@@ -10,7 +10,7 @@ var port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-app.post('/todo',(req,res)=>{
+app.post('/todos',(req,res)=>{
     var todo = new Todo({
         text: req.body.text
     });

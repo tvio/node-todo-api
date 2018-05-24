@@ -24,7 +24,7 @@ describe('POST /todo',()=>{
     var text  = 'nove todo';
 
     request(app)
-      .post('/todo')
+      .post('/todos')
       .send({text})
       .expect(200)
       .expect((res)=>{
@@ -44,7 +44,7 @@ describe('POST /todo',()=>{
 
    it('should not create todo with invalid body data',(done)=>{
     request(app)
-     .post('/todo')
+     .post('/todos')
      //empty todo
      .send({})
      .expect(400)
@@ -103,4 +103,40 @@ describe('GET /todos/id',() =>{
     });
 
 });
+
+describe('DELETE /todos/:id', ()=>{
+    it('should remove a todo', (done)=>{
+        var hexId = todos[0]._id.toHexString();
+
+        request(app)
+          .delete(`/todos/${hexId}`)
+          .expect(200)
+          .expect((res)=>{
+              expect(res.body.todo._id).toBe(hexId);
+          })
+          .end((err,res)=>{
+              if (err){
+                  return done(err);
+              }
+
+         // query databse using findbyid aby nenaslo smazane id - toNotExist
+
+        Todo.findById(hexId).then((todo)=>{
+            expect(todo).toNotExist();
+            done();
+        }).catch((e)=>done(e));
+                
+           
+    });
+
+    });
+    it('should return 404 if todo not found',(done)=>{
+
+    });
+
+    it('should return 404 if obejct is not valid',(done)=>{
+
+    });
+});
+
 
