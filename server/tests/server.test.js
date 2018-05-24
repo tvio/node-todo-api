@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const expect = require('expect');
 const request = require('supertest');
 const {app} = require('./../server');
@@ -9,9 +8,12 @@ const {ObjectID} = require ('mongodb');
 const todos = [{
     _id: new ObjectID(),
     text: 'First test todo'
+    
 },{
     _id: new ObjectID(),
-    text: 'Second test todo'
+    text: 'Second test todo',
+    hotovo: true
+    
 }];
 
 
@@ -152,3 +154,54 @@ describe('DELETE /todos/:id', ()=>{
 });
 
 
+describe('PATCH /todos/:id',()=>{
+    it('should update todo', (done)=>{
+        var hexId = todos[0]._id.toHexString();
+        var text = 'Zmena ukolu';
+        var hotovoDatum = new Date();
+       
+        //first item
+        //update text, set hotovo true
+        //200
+        // text is changed, hotovo true, hotovoDatum is cislo .toBeA
+        request(app)
+        .patch(`/todos/${hexId}`)
+        .send({
+            hotovo:true,
+            text,
+            hotovoDatum
+        })
+        .expect(200)
+        .expect((res)=>{
+            expect (res.body.todo.text).toBe(text)
+            //neumim kontrolovat datum zatim
+            expect(res.body.todo.hotovoDatum).toBeA('string');
+            expect(res.body.todo.hotovo).toBe(true);
+        })
+        .end(done);
+            
+    });
+    it('should clear hotovoDatum pokud neni hotovo todo', (done)=>{
+       //second item
+       //update text, set hotovo false
+       //200
+       // text se zmenil , hotovo false, hotovoDatum  je null . toNotExist
+       var hexId = todos[1]._id.toHexString();
+       var text = 'Zmena ukolu cislo 2';
+      
+        request(app)
+       .patch(`/todos/${hexId}`)
+       .send({
+           hotovo:false,
+           text
+       })
+       .expect(200)
+       .expect((res)=>{
+           expect (res.body.todo.text).toBe(text)
+           expect(res.body.todo.hotovoDatum).toNotExist();
+           expect(res.body.todo.hotovo).toBe(false);
+       })
+       .end(done);
+    });
+    
+})
