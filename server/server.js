@@ -1,3 +1,4 @@
+const _ = require('lodash');
 var express = require ('express');
 var bodyParser = require('body-parser');
 var {ObjectID} = require('mongodb');
@@ -92,6 +93,36 @@ app.get('/todos/:id',(req,res)=>{
                res.status(400).send(e);
        });
     });
+
+
+app.patch('/todos/:id',(req,res)=>{
+    var id = req.params.id;
+    var body = _.pick(req.body,['text','hotovo']);
+
+    if (!ObjectID.isValid(id)){
+        return res.status(404).send({info:'neni validni id',
+          code: 'OK',
+          datum: new Date});      
+
+    }
+
+    if (_.isBoolean(body.hotovo) && body.hotovo) {
+        body.hotovoDatum = new Date().getTime(); 
+    } else {
+        body.hotovo = false;
+        body.hotovoDatum = null;
+    }
+
+    Todo.findByIdAndUpdate(id,{$set:body},{new: true}).then((todo)=>{
+       if (!todo){
+        return res.status(400).send();
+       }
+       res.send({todo});
+    }).catch((e)=>{
+        res.status(400).send();
+    })
+
+});
 
 
 app.listen(port,()=> console.log('ToDo appka bezi na portu 3000'));
