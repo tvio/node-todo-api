@@ -4,20 +4,30 @@ const bcrypt  = require ('bcryptjs');
 const jwt = require ('jsonwebtoken');
 
 
-var data = {
-    id:10
-};
+var password = '123abc';
 
-var token = jwt.sign(data,'123abc');
-console.log(token);
-
-var decoded = jwt.verify(token,'123ab');
-console.log('decoded', decoded);
-
-var Hashedpass = 'dsf33';
-bcrypt.compare('123!',Hashedpass,(err,res)=>{
-    console.log(res);
+bcrypt.genSalt(10,(err,salt)=>{
+   bcrypt.hash(password,salt,(err,hash)=>{
+       console.log(hash);
+   });
 });
+//pridano m na zacatek hashe
+var hashedPassword = 'm$2a$10$uC03F57Jd0QjCxVnxdERReWLH1xTQdA9TgFKzIKtOycj55ErMe3qq';
+
+bcrypt.compare(password,hashedPassword).then((res)=>{
+   console.log(res);
+});
+
+// var data = {
+//     id:10
+// };
+
+// var token = jwt.sign(data,'123abc');
+// console.log(token);
+
+// var decoded = jwt.verify(token,'123ab');
+// console.log('decoded', decoded);
+
 
 
 // var message = 'hoj';

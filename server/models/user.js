@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var validator = require ('validator');
 var jwt = require ('jsonwebtoken');
 const _ = require ('lodash');
-const bcrypt = require ('bcrypt');
+const bcrypt = require ('bcryptjs');
 //user model -- ma na konci s, pokud ne s mongose doplni
 
 var UserSchema = new mongoose.Schema({ 
@@ -93,7 +93,7 @@ UserSchema.statics.findByCredentials = function (email,password){
     //  bcrypt.compare(password,user.password,(err,res)=>{
         //test ='CA978112CA1BBDCAFAC231B39A23DC4DA786EFF8147C4E72B9807785AFEE48BB';
         //nemam hashovane passwordy v db
-        bcrypt.compare(passowrd,user.password,(err,res)=>{
+        bcrypt.compare(password,user.password,(err,res)=>{
           if (res){
               resolve(user);
               console.log('rovne heslo');   
@@ -106,6 +106,28 @@ UserSchema.statics.findByCredentials = function (email,password){
       });
   });
 };
+
+UserSchema.pre('save',function (next){
+   var user = this;
+
+   if (user.isModified('password')){
+       console.log('chci to ulozit');
+      //hash
+      bcrypt.genSalt(10,(err,salt)=>{
+        bcrypt.hash(user.password,salt,(err,hash)=>{
+           
+           user.password = hash;
+           console.log(user.password);
+           next();
+        }); 
+    });
+      //nastavit hash
+     
+   } else {
+    console.log('neukladam');
+       next();
+   }
+});
 
 var User = mongoose.model('users', UserSchema);
 
