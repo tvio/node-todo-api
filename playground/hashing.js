@@ -1,6 +1,6 @@
 const  crypto  = require('crypto');
 const hash = crypto.createHash('sha256');
-
+const bcrypt  = require ('bcryptjs');
 const jwt = require ('jsonwebtoken');
 
 
@@ -14,8 +14,14 @@ console.log(token);
 var decoded = jwt.verify(token,'123ab');
 console.log('decoded', decoded);
 
+var Hashedpass = 'dsf33';
+bcrypt.compare('123!',Hashedpass,(err,res)=>{
+    console.log(res);
+});
+
 
 // var message = 'hoj';
+
 
 
 // hash.setEncoding('hex');
