@@ -16,6 +16,10 @@ var Todo = mongoose.model('todo',{
     },
     hotovoDatum:{
         type: Date
+    },
+    _vytvoril: {
+        required:true,
+        type: mongoose.Schema.Types.ObjectId
     }
 });
 

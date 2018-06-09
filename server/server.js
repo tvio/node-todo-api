@@ -14,9 +14,10 @@ var port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-app.post('/todos',(req,res)=>{
+app.post('/todos',authenticate,(req,res)=>{
     var todo = new Todo({
-        text: req.body.text
+        text: req.body.text,
+        _vytvoril: req.user._id
     });
 
     todo.save().then((doc)=>{
@@ -28,11 +29,11 @@ app.post('/todos',(req,res)=>{
 
 });
 
-app.get('/todos',(req,res)=>{
+app.get('/todos',authenticate,(req,res)=>{
 
 
     
-    Todo.find().then((todos)=>{
+    Todo.find({_vytvoril:req.user._id}).then((todos)=>{
        if (!todos){
            res.status(404).send({info:'nenalezeno',code: 'OK',datum: new Date})
        } else {
@@ -47,7 +48,7 @@ app.get('/todos',(req,res)=>{
     });
 });
 
-app.get('/todos/:id',(req,res)=>{
+app.get('/todos/:id',authenticate,(req,res)=>{
     var id  = req.params.id;
  
  
@@ -57,7 +58,7 @@ app.get('/todos/:id',(req,res)=>{
          datum: new Date});
   }
  
-    Todo.findById(id).then((todo)=>{
+    Todo.findOne({_id:id,_vytvoril:req.user._id}).then((todo)=>{
      if (!todo){
          res.status(404).send({info:'nenalezeno',code: 'OK',datum: new Date})
      } else {
@@ -73,7 +74,7 @@ app.get('/todos/:id',(req,res)=>{
  });
  
 
- app.delete('/todos/:id',(req,res)=>{
+ app.delete('/todos/:id',authenticate,(req,res)=>{
     var id  = req.params.id;
  
  
@@ -82,7 +83,7 @@ app.get('/todos/:id',(req,res)=>{
          code: 'OK',
          datum: new Date});
   }
-    Todo.findByIdAndRemove(id).then((todo)=>{
+    Todo.findOneAndRemove({_id:id,_vytvoril:req.user._id}).then((todo)=>{
         if (!todo){
             res.status(404).send({info:'nenalezeno',code: 'OK',datum: new Date})
         } else {
@@ -98,7 +99,7 @@ app.get('/todos/:id',(req,res)=>{
     });
 
 
-app.patch('/todos/:id',(req,res)=>{
+app.patch('/todos/:id',authenticate,(req,res)=>{
     var id = req.params.id;
     var body = _.pick(req.body,['text','hotovo']);
 
@@ -115,8 +116,8 @@ app.patch('/todos/:id',(req,res)=>{
         body.hotovo = false;
         body.hotovoDatum = null;
     }
-
-    Todo.findByIdAndUpdate(id,{$set:body},{new: true}).then((todo)=>{
+    console.log('delam update',body.hotovo);
+    Todo.findOneAndUpdate({_id:id,_vytvoril:req.user._id},{$set:body},{new: true}).then((todo)=>{
        if (!todo){
         return res.status(400).send();
        }
